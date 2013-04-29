@@ -1,0 +1,71 @@
+Answers to questions
+
+Q)My level of familiarity with python, git and webservers
+Python:
+I am quite comfortable working with python. I have worked with code for reading and writing files, basic data structures - lists, tuples and dictionaries.
+I am very comfortable with string manipulation. 
+I also have a basic understanding of sockets I am enough comfortable with sockets in python that I can quickly lookup something I may not know, like perhaps socket options.
+
+Git:
+I am not too comfortable with Git although I do understand the basic concepts for cloning, staging, committing and pushing to/from the repository.
+I have used other versioning tools in the past like Perforce, starteam and SVN so I dont think that learning Git will be very difficut.
+
+Webservers
+I have a basic understanding of webservers. I am comfortable with how html static pages are served and some understanding of how html pages are dynamically served.
+I am comfortable with multithreading, mutexes, semaphores and the issues with scalability that webservers need to observe to support large number of connections.
+These include loadbalancing, simultaneous connections, DDoS attacks etc...
+
+
+
+How long it took me to complete.
+I completed 4 of the 5 milestones in the list. Adding the milestone for serving images and HTML docs should not be too difficult. 
+It took me 2 hours 10 minutes to complete the 4 milestones once I was ready with my git environment. Since I was completely unfamilir with Git I had to install it from scratch and that took me 4 hours.
+
+
+Description of how I developed the solution:
+Milestone 1:
+I found that milestone 2 was  more tangible for me in terms of thinking of a solution than milestone 1. For milestone 1(Build a simple socket server) I decided to imple
+ment a simple TCP socket.
+I decided to create a class to act as an Http server. I used a class( objected oriented approach) instead of funtions(procedural) because I like the encapsulation model in Object oriented programming. Particularly with new features are to be added to an existing project the new features can be added by inheritance without breaking older proven functionality . 
+
+I then decided to add features and methods to the class as I added new functionality. In the initial stage I added socket creation/binding/listening in the constructor.
+For milestone 1 I simply created a socket that accepts http connections on the http port.
+
+Milestone2:  To  build a TCP server that displays static HTML images I added the functionality to process a request coming in on the HTTP port in a separate method and read the static html file line by line and sent it over the remote socket. I parsed the text from the remote end to detect whether this was a "GET" request.
+
+Milestone 3: To list the dir contents I used the os module to return the files list. This included directories and files. I then created an html link for each directory on the fly and sent out this over to the remoteSocket. I also added one more link to go up one directory. Known issue-Because this feature uses the text "up" to identify that the user want to traverse one level up, "up" canno be a dir name. Possible solutions to this are proposed later.
+
+Milestone 4: Added functionality to traverse directory ahead and back by changing the current directory as requested by the user using os module. Also detect whether the user clicked on a file or directory and display error on CLI if it is a file. Did not have time to send a 40x Http error response to this condition to the remote end but this case can be detected in the code.
+
+Milestone 5: Could not accomplish in the alloted time.
+
+
+Known problems and how I could fix them if I had more time.
+
+Problem:Server exits after rendering three sockets
+Description: There is no clean way to close the server at the moment. So the server has been limited to processing three requests. After processing three requests it will exit. 
+Solution: I would fix this by creating a CLI command option(-quit). If the prorgram detected this cli option then it would send out a quit signal via Interprocess communications( using sockets) to the server which would cause the isAcceptingConnections() function to return false breaking out of the loop and exiting. The main server process would have to accept connections on two different threads one for the http server and one for IPC
+
+
+Directory name cannot be "up"
+Description: Because this feature uses the text "up" to detect that the user wants to traverse one level up, up cannot be the name of a directory
+Solution: Try to use ".." instead of up to detect the user's intent. An attempt was made to implement this but because of time constraints an easier approach was used for the time being.
+
+
+Code not tested for the case where the user wants to go back up from the root dir
+Solution: This is a matter of testing the corner cases of the code. Upon testing this case(after the time limit had passed) I found that this case worked correctly but the code was having problems traversing directories with spaces in the dir name.
+To fix this I would look into debugging the code by creating this senario.
+
+
+If user clicks on a file instead of a dir, should send http error code.
+Description: The user should receive an HTTP error when he or she tries to traverse a file thinking that it is a folder.
+Solution: Detect that this is a file not a directory( The code handles this already) and return an HTTP error code. Could not implement the http error response due to lack of time.
+
+There may be some cases where the socket it not being closed upon returning from a function. Did not have time to look into this.
+Solution: Make sure that sockets are closed correctly at the end of each method. Parse through the methods to make sure that any return statements in the middle of the code are not returning without closing the socket.
+
+
+
+
+
+
