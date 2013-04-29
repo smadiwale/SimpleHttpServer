@@ -1,4 +1,5 @@
 import socket
+import os
 from server_constants import *
 
 
@@ -23,6 +24,7 @@ class HttpServer:
 			return True
 
 	def start(self):
+		r = SERVER_ERR_NONE
 		while self.isAcceptingConnections():
 			if self.sock:
 				print "\nAccepting Connections..."
@@ -32,12 +34,13 @@ class HttpServer:
 				else:
 					print "Error: Invalid Remote socket"
 					remoteSock.close()
-					return SERVER_ERR_REMOTE_SOCK_INVALID
+					r = SERVER_ERR_REMOTE_SOCK_INVALID
 
 			else:
-				return SERVER_ERR_SERV_SOCK_INVALID
+				r = SERVER_ERR_SERV_SOCK_INVALID
 
 		self.sock.close()
+		return r
 	
 
 
@@ -47,15 +50,16 @@ class HttpServer:
 		rStr = rStr.split()
 		if rStr[0] and rStr[1] and rStr[2]:
 			print "Rx:", rStr[0], rStr[1], rStr[2]
-			if rStr[0] == "GET" and rStr[1] =="/":
-				staticF = open(SERVER_STATIC_HTML)
-				if not staticF:
-					print "static file invalid"
-				else:
-		#			print "staticFile:", staticF
-					for line in staticF:
-						bytes =remoteSock.send(line)
-				staticF.close()
+			if rStr[0] == "GET":
+				#Now return the contents of the directory instead.
+				dirList = os.listdir(".")
+				remoteSock.send("<HTML>")
+				#First transmit the back dir link
+				remoteSock.send(SERVER_UP_ONE_DIR_ANCHOR+"<BR>")
+				for dirlink in dirList:
+					sendStr = "<A href=\"" + dirlink +"\">"+ dirlink + "</A><BR>"
+					remoteSock.send(sendStr)
+				remoteSock.send("</HTML>")
 
 		remoteSock.close()
 		self.numConnections+=1
