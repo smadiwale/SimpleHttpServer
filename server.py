@@ -76,6 +76,7 @@ class HttpServer:
 						os.chdir(file)	
 					except OSError:
 						print file +" is not a directory"
+						remoteSock.close()
 						return
 					self.sendCurrentDirContents(remoteSock)
 				else:
