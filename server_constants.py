@@ -2,7 +2,7 @@
 SERVER_HTTP_PORT = 80
 SERVER_LISTEN_BACKLOG = 10
 SERVER_STATIC_HTML="StaticHtmlpage1.html"
-SERVER_UP_ONE_DIR_ANCHOR="<A href=\"..\">Up one dir</a>"
+SERVER_UP_ONE_DIR_ANCHOR="<A href=\"up\">Up one dir</a>"
 
 #Error Codes
 SERVER_ERR_NONE=0
